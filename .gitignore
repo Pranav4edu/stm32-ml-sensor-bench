@@ -1,0 +1,19 @@
+# CMake and IDE build output
+/build/
+/out/
+/cmake-build-*/
+/.cache/
+
+# VS Code local state
+.vscode/*.log
+.vscode/ipch/
+
+# Generated firmware binaries and reports
+*.elf
+*.hex
+*.bin
+*.map
+*.lst
+
+# macOS Finder metadata
+.DS_Store
