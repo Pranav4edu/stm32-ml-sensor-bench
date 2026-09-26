@@ -29,6 +29,8 @@ Every engine will receive the same quantized model weights and test inputs. We w
 
 UART logging runs at 115200 baud through the NUCLEO's ST-LINK virtual COM port. It is kept outside the timed inference section.
 
+The measured results and method live in [docs/benchmarks.md](docs/benchmarks.md).
+
 ## Roadmap
 
 1. Establish build, flash, UART, LED, and cycle-counter baseline.

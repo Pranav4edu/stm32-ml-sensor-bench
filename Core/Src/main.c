@@ -21,7 +21,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
+#include <string.h>
+#include "ml_bench.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,7 +60,18 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+static void dwt_counter_init(void)
+{
+  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+  DWT->CYCCNT = 0;
+  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+}
 
+static void uart_write(const char *text)
+{
+  HAL_UART_Transmit(&huart2, (uint8_t *)text,
+                    strlen(text), HAL_MAX_DELAY);
+}
 /* USER CODE END 0 */
 
 /**
@@ -92,7 +105,20 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  dwt_counter_init();
 
+  uart_write("\r\nSTM32 ML Sensor Bench\r\n");
+  uart_write("DWT cycle counter ready\r\n");
+
+  ml_bench_result_t benchmark = ml_bench_run_reference();
+  char message[160];
+  snprintf(message, sizeof(message),
+           "reference_int8_dot,iterations=%lu,score=%ld,total_cycles=%lu,cycles_per_run=%lu\r\n",
+           (unsigned long)benchmark.iterations,
+           (long)benchmark.score,
+           (unsigned long)benchmark.total_cycles,
+           (unsigned long)benchmark.cycles_per_run);
+  uart_write(message);
   /* USER CODE END 2 */
 
   /* Initialize leds */
@@ -109,6 +135,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    BSP_LED_Toggle(LED2);
+    HAL_Delay(250);
   }
   /* USER CODE END 3 */
 }
