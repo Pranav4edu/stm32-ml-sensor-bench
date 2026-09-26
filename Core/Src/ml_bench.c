@@ -6,7 +6,12 @@
 #define ML_BENCH_ITERATIONS    1000U
 
 /* A deterministic stand-in for one short, quantized sensor window. */
-static int8_t sensor_window[ML_BENCH_VECTOR_LENGTH];
+/*
+ * Volatile is deliberate here.  The optimizer must treat this as sensor data
+ * that can change outside the program, so it cannot pre-compute one dot
+ * product and replace the 1,000 measured inferences with a multiplication.
+ */
+static volatile int8_t sensor_window[ML_BENCH_VECTOR_LENGTH];
 
 /* Quantized weights for one output neuron. */
 static const int8_t weights[ML_BENCH_VECTOR_LENGTH] = {
@@ -31,7 +36,7 @@ static void make_synthetic_sensor_window(void)
 
 /* Our readable, unoptimized inference primitive. */
 __attribute__((noinline))
-static int32_t int8_dot_product_reference(const int8_t *input,
+static int32_t int8_dot_product_reference(const volatile int8_t *input,
                                           const int8_t *kernel,
                                           uint32_t length)
 {

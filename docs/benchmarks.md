@@ -29,3 +29,23 @@ This is an educational correctness baseline, not an optimized number. It
 includes Debug-build overhead and deliberately prevents inlining. Future
 measurements will compare an optimized build and a Cortex-M4 DSP implementation
 against this exact input, weight set, and measurement method.
+
+## Baseline 002: Release reference kernel
+
+| Field | Value |
+| --- | ---: |
+| Board | NUCLEO-F446RE |
+| Core clock | 84 MHz |
+| Build preset | Release |
+| Kernel | `int8_dot_product_reference` |
+| Vector length | 32 |
+| Iterations | 1,000 |
+| Score | 48 |
+| Total cycles | 345,150 |
+| Cycles per run | 345 |
+| Approximate time per run | 4.1 µs |
+
+This is the first release-quality on-device number. The input buffer is marked
+volatile in the benchmark harness so the compiler cannot replace the repeated
+sensor inference work with one precomputed result. It is a valid baseline for
+the hand-unrolled and DSP kernels that follow.
